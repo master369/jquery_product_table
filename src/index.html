@@ -1,0 +1,166 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Product Table</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- inject:css -->
+    <!-- endinject -->
+        <script id="tableRowTemplate" type="text/html" >
+        <tr data-id="<%=product.Id%>">
+            <td>
+                <a class="clickable"><%=product.Name%></a>
+                <span class="badge pull-right"><%=product.Count%></span>
+            </td>
+            <td>
+                <%=format.currency(product.Price)%>
+            </td>
+            <td>
+                <button class="btn btn-warning clickable">Edit</button>
+                <button class="btn btn-danger remove">Remove</button>
+            </td>
+        </tr>
+    </script>
+    <script id="myModal" type="text/html" >
+    <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close cancel" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" data-id="<%=product.Id%>">Info <%=product.Name%></h4>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="./index" name="productAddForm">
+        <p>Name:<input name="Name" type="text" class="input-sm form-control" id="modalProductName" value="<%=product.Name%>"autofocus/></p>
+        <p>Email:<input name="Email" type="text" class="input-sm form-control" id="modalProductEmail" value="<%=product.Email%>"/></p>
+        <p>Count:<input name="Count" type="number" class="input-sm form-control" id="modalProductCount" value="<%=product.Count%>"/></p>
+        <p>Price:<input name="Price" type="text" class="input-sm form-control" id="modalProductPrice" value="<%=format.currency(product.Price)%>"/></p>
+
+         <div class="row">
+            <div class="col-md-4">
+              <label for="delivery-product">Delivery</label>
+              <select id="modalProductDelivery" name="delivery-product" class="form-control">
+                <% for( option in deliveryList.select) {%>
+                <option value="<%= deliveryList.select[option]%>"><%= deliveryList.select[option] %></option>
+                <% } %>
+              </select>
+            </div>
+            <div id="modalProductCountry" class="col-md-4 productCountry">
+                <% for(radio in deliveryList.country) {%>
+                 <div class="radio">
+                  <label>
+                    <input type="radio" name="country" id="radio<%= radio %>" value="<%= deliveryList.country[radio] %>"/>
+                    <%= deliveryList.country[radio] %>
+                  </label>
+                </div>
+                <% } %>
+            </div>
+            <div id="modalProductCity" class="col-md-4 productCity">
+            </div>
+
+      </div>
+      </form>
+          </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default cancel" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary save">Add / Save changes</button>
+      </div>
+    </div>
+  </div>
+</script>
+<script id="productCity" type="text/html">
+<div>
+        <% for(checkbox in checkBox) {%>
+        <div class="checkbox">
+        <label>
+         <input class="city-checkbox"  id="<%= checkBox[checkbox] %>" type="checkbox" value="<%= checkBox[checkbox] %>" />
+        <span id="span<%= checkBox[checkbox] %>"><%= checkBox[checkbox] %></span>
+         </label>
+        </div>
+        <% } %>
+        </div>
+        </script>
+
+    <script id="confirmDelete" type="text/html" >
+        <div class="modal-dialog">
+            <div class="modal-content">
+            
+                <div class="modal-header">
+                    <button type="button" class="close cancel" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" data-id="<%=product.Id%>" id="myModalLabel">Confirm Delete</h4>
+                </div>
+            
+                <div class="modal-body">
+                    <p>Are you sure remove this product ?</p>
+                    <p>Name: <%=product.Name%></p>
+                    <p>Count: <%=product.Count%></p>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default cancel" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-danger save">Delete</a>
+                </div>
+            </div>
+        </div>
+    </script>
+    <!-- inject:js -->
+    <!-- endinject -->
+</head>
+<body>
+    <!--[if lt IE 10]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Brand</a>
+            </div>
+        </div><!-- /.container-fluid -->
+    </nav>
+    <div class="container">
+        <div class="row" id="controls">
+            <div class="col-md-6">
+                <input class="form-control" id="searchInput" />
+            </div>
+            <div class="col-md-6">
+                <button class="btn btn-info search">
+                    Search
+                </button>
+                <button class="btn btn-success pull-right clickable" >
+                    Add new
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <table class="table table-striped tablesorter">
+                <thead>
+                    <tr role="row" >
+                        <th>
+                            <span class="btn-sort" id="tableName">Name</span>
+                            <i class="glyphicon"></i>
+                        </th>
+                        <th>
+                            <span class="btn-sort" id="tablePrice">Price</span>
+                            <i class="glyphicon"></i>
+                        </th>
+                        <th>
+                            <span>Actiones<span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="activeModal" class="modal fade"></div>
+    <div id="activeDeleteModal" class="modal fade"></div>
+</body>
+</html>

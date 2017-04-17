@@ -1,0 +1,27 @@
+* {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box; }
+
+.clickable {
+  cursor: pointer; }
+
+html, body {
+  height: 100%; }
+
+body {
+  position: relative; }
+
+.modal.modal-show {
+  top: 40%;
+  display: block;
+  left: 50%;
+  height: 550px;
+  position: fixed;
+  transform: translate(-50%, -50%); }
+  .modal.modal-show .modal-dialog {
+    border-radius: 0;
+    margin: 0 auto; }
+
+.btn-sort {
+  cursor: pointer; }
